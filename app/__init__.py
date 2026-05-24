@@ -13,10 +13,12 @@ def create_app():
 
     app = Flask(__name__)
 
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+    flask_secret = os.getenv("FLASK_APP_SECRET")
 
-    if not app.config["SECRET_KEY"]:
-        raise RuntimeError("SECRET_KEY environment variable is not set.")
+    if not flask_secret:
+        raise RuntimeError("Flask app secret environment variable is not set.")
+
+    app.secret_key = flask_secret
 
     csrf.init_app(app)
 
