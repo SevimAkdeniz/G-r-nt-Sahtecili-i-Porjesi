@@ -20,8 +20,14 @@ UNSUPPORTED_FILE_MESSAGE = (
     "Desteklenmeyen dosya formatı. jpg, png, webp, gif, bmp, tif kullanılabilir."
 )
 
+@main_bp.get("/")
+def index():
+    return render_template(INDEX_TEMPLATE, error=None, payload=None)
 
-@main_bp.route("/", methods=["GET", "POST"])
+
+@main_bp.post("/")
+def analyze_image():
+    return handle_image_analysis_request()
 def index():
     if request.method == "POST":
         return handle_image_analysis_request()

@@ -1,7 +1,11 @@
 from flask import Flask
 from pathlib import Path
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
 import os
+
+
+csrf = CSRFProtect()
 
 
 def create_app():
@@ -13,6 +17,8 @@ def create_app():
 
     if not app.config["SECRET_KEY"]:
         raise RuntimeError("SECRET_KEY environment variable is not set.")
+
+    csrf.init_app(app)
 
     base = Path(__file__).resolve().parent
     app.config["UPLOAD_FOLDER"] = str(base / "static" / "uploads")
