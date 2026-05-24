@@ -19,17 +19,44 @@
     <section class="card">
       <form method="post" enctype="multipart/form-data" class="upload-form">
         <div class="field">
-          <label>Orijinal Görsel <span>(opsiyonel)</span></label>
-          <input type="file" name="original_image" accept="image/*">
-          <small>Boş bırakırsan tek görsel üzerinden copy-move analizi yapılır.</small>
+          <label for="original_image">
+            Orijinal Görsel <span>(opsiyonel)</span>
+          </label>
+          <input
+            id="original_image"
+            type="file"
+            name="original_image"
+            accept="image/*"
+            aria-describedby="original_image_help"
+          >
+          <small id="original_image_help">
+            Boş bırakırsan tek görsel üzerinden copy-move analizi yapılır.
+          </small>
         </div>
+
         <div class="field">
-          <label>Şüpheli Görsel <span>(zorunlu)</span></label>
-          <input type="file" name="suspect_image" accept="image/*" required>
+          <label for="suspect_image">
+            Şüpheli Görsel <span>(zorunlu)</span>
+          </label>
+          <input
+            id="suspect_image"
+            type="file"
+            name="suspect_image"
+            accept="image/*"
+            required
+            aria-describedby="suspect_image_help"
+          >
+          <small id="suspect_image_help">
+            Analiz edilecek şüpheli görüntüyü yükleyin.
+          </small>
         </div>
+
         <button type="submit">Analiz Et</button>
       </form>
-      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
     </section>
 
     {% if payload %}
@@ -37,15 +64,27 @@
       <div>
         <p class="eyebrow">{{ payload.mode }}</p>
         <h2>{{ payload.decision.label }}</h2>
-        <p>Genel güven skoru: <strong>%{{ payload.decision.confidence }}</strong> | Pozitif algoritma: {{ payload.decision.positive_algorithms }}/{{ payload.decision.total_algorithms }}</p>
+        <p>
+          Genel güven skoru:
+          <strong>%{{ payload.decision.confidence }}</strong>
+          | Pozitif algoritma:
+          {{ payload.decision.positive_algorithms }}/{{ payload.decision.total_algorithms }}
+        </p>
       </div>
     </section>
 
     <section class="grid two">
       {% if payload.original_url %}
-      <div class="card image-card"><h3>Orijinal</h3><img src="{{ payload.original_url }}" alt="Orijinal"></div>
+      <div class="card image-card">
+        <h3>Orijinal</h3>
+        <img src="{{ payload.original_url }}" alt="Yüklenen orijinal görsel">
+      </div>
       {% endif %}
-      <div class="card image-card"><h3>Şüpheli</h3><img src="{{ payload.suspect_url }}" alt="Şüpheli"></div>
+
+      <div class="card image-card">
+        <h3>Şüpheli</h3>
+        <img src="{{ payload.suspect_url }}" alt="Yüklenen şüpheli görsel">
+      </div>
     </section>
 
     <section class="card">
@@ -64,14 +103,34 @@
             {% for r in payload.results %}
             <tr>
               <td>{{ r.algorithm }}</td>
-              <td><span class="pill {{ 'bad' if r.tampered else 'good' }}">{{ 'Şüpheli' if r.tampered else 'Temiz' }}</span></td>
+              <td>
+                <span class="pill {{ 'bad' if r.tampered else 'good' }}">
+                  {{ 'Şüpheli' if r.tampered else 'Temiz' }}
+                </span>
+              </td>
               <td>%{{ r.confidence }}</td>
-              <td>{{ r.message }}
-                {% if r.changed_area is defined %} | Değişen alan: %{{ r.changed_area }}{% endif %}
-                {% if r.matches is defined %} | Eşleşme: {{ r.matches }}{% endif %}
-                {% if r.cluster_matches is defined %} | Küme: {{ r.cluster_matches }}{% endif %}
-                {% if r.anomaly_ratio is defined %} | Anomali: %{{ r.anomaly_ratio }}{% endif %}
-                {% if r.sequence_anomaly is defined %} | Sıralı anomali: %{{ r.sequence_anomaly }}{% endif %}
+              <td>
+                {{ r.message }}
+
+                {% if r.changed_area is defined %}
+                  | Değişen alan: %{{ r.changed_area }}
+                {% endif %}
+
+                {% if r.matches is defined %}
+                  | Eşleşme: {{ r.matches }}
+                {% endif %}
+
+                {% if r.cluster_matches is defined %}
+                  | Küme: {{ r.cluster_matches }}
+                {% endif %}
+
+                {% if r.anomaly_ratio is defined %}
+                  | Anomali: %{{ r.anomaly_ratio }}
+                {% endif %}
+
+                {% if r.sequence_anomaly is defined %}
+                  | Sıralı anomali: %{{ r.sequence_anomaly }}
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -84,7 +143,7 @@
       {% for v in payload.visuals %}
       <div class="card image-card">
         <h3>{{ v.algorithm }} Görsel Çıktı</h3>
-        <img src="{{ v.url }}" alt="{{ v.algorithm }} sonucu">
+        <img src="{{ v.url }}" alt="{{ v.algorithm }} algoritması analiz çıktısı">
       </div>
       {% endfor %}
     </section>
